@@ -1,3 +1,4 @@
+include_recipe 'nginx::default'
 include_recipe 'nginx::service'
 
 cookbook_file '/etc/nginx/sites-available/jenkins' do
