@@ -1,0 +1,22 @@
+---
+driver:
+  name: opsworks
+  stack_id:
+  layer_id:
+
+busser:
+  ruby_bindir: /opt/aws/opsworks/local/bin
+
+provisioner:
+  name: shell
+
+platforms:
+  - name: Amazon Linux 2014.09
+  - name: Ubuntu 12.04 LTS
+  - name: Ubuntu 14.04 LTS
+
+suites:
+  - name: jenkins_helper
+    run_list:
+      - recipe[jenkins::master]
+      - recipe[jenkins_helper::default]
