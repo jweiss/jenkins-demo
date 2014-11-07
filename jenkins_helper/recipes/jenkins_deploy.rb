@@ -1,3 +1,13 @@
+template node[:jenkins_helper][:deployer_binary] do
+  source 'opsworks_deployer.rb.erb'
+  variables :environment_variables => {
+    "OpsWorksInstanceID" => node[:opsworks][:instance][:id]
+  }
+  owner 'jenkins'
+  group 'jenkins'
+  mode 0750
+end
+
 node[:deploy].each do |app, deploy|
   config_file = "/tmp/jenkins-config-#{app}.xml"
 

@@ -1,0 +1,47 @@
+#!/usr/local/bin/ruby
+
+$VERBOSE = false
+require 'rubygems'
+require 'aws-sdk'
+
+opsworks = AWS::OpsWorks.new().client
+own_instance_id = ENV['OpsWorksInstanceID']
+
+$VERBOSE = false
+require 'rubygems'
+require 'aws-sdk'
+
+stack_id = opsworks.describe_instances(:instance_ids => [own_instance_id])[:instances][0][:stack_id]
+online_instance_ids = opsworks.describe_instances(:stack_id => stack_id)[:instances].select{|instance| instance[:status] == 'online'}.map{|instance| instance[:instance_id]} - [own_instance_id]
+
+app_id = opsworks.describe_apps(:stack_id => stack_id)[:apps].detect{|app| name = app[:name].downcase.scan(/[a-z]+/).join == ENV['JOB_NAME']}[:app_id]
+
+app = opsworks.describe_apps(:app_ids => [app_id])[:apps][0]
+instances = opsworks.describe_instances(:stack_id => app[:stack_id])[:instances]
+instance_ids, instance_hostnames = [], []
+
+online_instances = opsworks.describe_instances(:stack_id => stack_id)[:instances].select do |instance|
+  instance[:status] == 'online' &&
+  instance[:instance_id] != own_instance_id
+end
+
+if online_instances.any?
+  online_instances.each do |instance|
+    instance_ids << instance[:instance_id]
+    instance_hostnames << instance[:hostname]
+  end
+
+  puts 'deploying to'
+  instance_hostnames.sort.each do |instance_hostname|
+  puts "* #{instance_hostname}"
+  end
+
+  deployment = opsworks.create_deployment(:stack_id => app[:stack_id], :app_id => app_id, :instance_ids => instance_ids, :command => {:name => 'deploy'})
+
+  while (deployment = opsworks.describe_deployments(:deployment_ids => [deployment[:deployment_id]])[:deployments][0])[:status] == 'running'
+    sleep 5
+  end
+  puts deployment[:status]
+else
+  puts 'no online instance, not deploying'
+end
