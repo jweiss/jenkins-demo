@@ -1,13 +1,3 @@
-template '/var/lib/jenkins/config.xml' do
-  source 'global.xml.erb'
-  variables :environment_variables => {
-    "OpsWorksInstanceID" => node[:opsworks][:instance][:id]
-  }
-  owner 'jenkins'
-  group 'jenkins'
-  mode 0644
-end
-
 jenkins_plugin 'ruby'
 jenkins_plugin 'rake'
 
