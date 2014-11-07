@@ -1,7 +1,7 @@
 template '/var/lib/jenkins/config.xml' do
   source 'global.xml.erb'
   variables :environment_variables => {
-    :instance_id => node[:opsworks][:instance][:id]
+    "OpsWorksInstanceID" => node[:opsworks][:instance][:id]
   }
   owner 'jenkins'
   group 'jenkins'
