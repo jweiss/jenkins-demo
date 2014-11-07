@@ -1,1 +1,1 @@
-node.default[:jenkins_helper][:deployer_binay] = '/var/lib/jenkins/opsworks_deployer.rb'
+node.default[:jenkins_helper][:deployer_binary] = '/var/lib/jenkins/opsworks_deployer.rb'
