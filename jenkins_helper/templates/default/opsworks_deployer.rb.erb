@@ -5,7 +5,7 @@ require 'rubygems'
 require 'aws-sdk'
 
 opsworks = AWS::OpsWorks.new().client
-own_instance_id = ARGV[0] || ENV['OpsWorksInstanceID'] || <%= node[:opsworks][:instance][:id] %>
+own_instance_id = ARGV[0] || ENV['OpsWorksInstanceID'] || "<%= node[:opsworks][:instance][:id] %>"
 puts "Running on AWS OpsWorks instance #{own_instance_id.inspect}"
 
 $VERBOSE = false
